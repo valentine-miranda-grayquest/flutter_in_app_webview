@@ -87,8 +87,13 @@ class _GQWebViewState extends State<GQWebView> {
         configureController(controller);
       },
       shouldOverrideUrlLoading: (controller, navigationAction) async {
-        print(navigationAction.request.url);
-        return NavigationActionPolicy.ALLOW;
+        if (navigationAction.request.url?.isValidUri ?? false) {
+          print("Navigating...");
+          print(navigationAction.request.url);
+          return NavigationActionPolicy.ALLOW;
+        } else {
+          return NavigationActionPolicy.CANCEL;
+        }
       },
       onReceivedError: (controller, request, error) {
         print(error.description);
@@ -97,7 +102,7 @@ class _GQWebViewState extends State<GQWebView> {
         print(errorResponse.data);
       },
       onCreateWindow: (controller, createWindowAction) async {
-        print(createWindowAction.request);
+        print(createWindowAction.request.url);
         return true;
       },
     );
