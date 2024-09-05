@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_inapp_webview/SilverWidgets.dart';
-import 'package:flutter_inapp_webview/gq_webview.dart';
+import 'package:flutter_inapp_webview/gq_home.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -61,10 +60,10 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    return const SafeArea(
-        child: Scaffold(
-      body: GQWebView(),
-      // body: SilverWidgets(),
-    ));
+    // return const SafeArea(
+    //     child: Scaffold(
+    //         // body: GQWebView(),
+    //         ));
+    return GQHome();
   }
 }
