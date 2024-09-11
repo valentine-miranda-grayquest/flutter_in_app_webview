@@ -3,89 +3,176 @@ import 'package:flutter_inapp_webview/applications_modal_view.dart';
 import 'package:flutter_inapp_webview/installement_card.dart';
 
 class GQHome extends StatefulWidget {
-  const GQHome({super.key});
-
-  @override
-  State<StatefulWidget> createState() => _GQHomeState();
-}
-
-class _GQHomeState extends State<GQHome> {
-  double itemExtent = 225;
+  GQHome({super.key});
 
   final _scrollController = DraggableScrollableController();
 
   @override
+  State<StatefulWidget> createState() => _GQHomeState(_scrollController);
+}
+
+class _GQHomeState extends State<GQHome> {
+  _GQHomeState(this._scrollController);
+
+  final DraggableScrollableController _scrollController;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _scrollController.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return SafeArea(
-        child: Scaffold(
-      bottomNavigationBar: NavigationBar(
-          height: 50,
-          onDestinationSelected: (value) {
-            print(value);
-          },
-          destinations: const [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+      child: Scaffold(
+          bottomNavigationBar: Container(
+            height: 50,
+            decoration: const BoxDecoration(color: Colors.white, boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 4,
+                spreadRadius: 1,
+              )
+            ]),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               crossAxisAlignment: CrossAxisAlignment.center,
-              children: [Icon(Icons.home), Text("Home")],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [Icon(Icons.menu), Text("Menu")],
-            ),
-          ]),
-      appBar: AppBar(
-        backgroundColor: Colors.indigo,
-        title: const Row(children: [
-          Text(
-            "grayQuest",
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
+              children: [
+                const Row(
+                  children: [
+                    Icon(Icons.home),
+                    Text("Home"),
+                  ],
+                ),
+                Container(
+                  height: 25,
+                  width: 1,
+                  color: Colors.grey,
+                ),
+                const Row(
+                  children: [
+                    Icon(Icons.person_2_rounded),
+                    Text("Menu"),
+                  ],
+                )
+              ],
             ),
           ),
-        ]),
-      ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Container(
-            height: 230,
-            color: Colors.indigo,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: List<Widget>.generate(10, (int index) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 3,
+          appBar: AppBar(
+            backgroundColor: Colors.indigo,
+            title: const Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    "grayQuest",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
                     ),
-                    child: InstallementCarousel(
-                      width: 225,
+                  ),
+                  Icon(
+                    Icons.info,
+                    color: Colors.white,
+                  )
+                ]),
+          ),
+          floatingActionButton: GestureDetector(
+            onTap: () {
+              print("Did tap floating action button");
+            },
+            child: Container(
+              height: 50,
+              width: 120,
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                  color: Colors.indigo,
+                  boxShadow: const [
+                    BoxShadow(
+                        color: Colors.grey,
+                        spreadRadius: 1,
+                        blurRadius: 4,
+                        offset: Offset(0, 2))
+                  ],
+                  borderRadius: BorderRadius.circular(25)),
+              child: const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.add,
+                    color: Colors.white,
+                  ),
+                  Text(
+                    "PAY FEE",
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
                     ),
-                  );
-                }),
+                  ),
+                ],
               ),
             ),
           ),
-          Expanded(
-            child: DraggableScrollableSheet(
-                initialChildSize: 1,
-                maxChildSize: 1,
-                minChildSize: 1,
-                expand: true,
-                snap: true,
-                controller: _scrollController,
-                builder: (context, controller) {
-                  return ApplicationsModalView();
-                }),
-          )
-        ],
-      ),
-    ));
+          body: LayoutBuilder(builder: (context, constraints) {
+            return Stack(
+              children: [
+                Expanded(
+                    child: Container(
+                  color: Colors.indigo,
+                )),
+                Container(
+                  height: MediaQuery.sizeOf(context).height * 0.27,
+                  color: Colors.indigo,
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
+                    child: ListView(
+                      scrollDirection: Axis.horizontal,
+                      children: List<Widget>.generate(6, (int index) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 3,
+                          ),
+                          child: GestureDetector(
+                            onTap: () {
+                              print("Did tap Item");
+                            },
+                            child: InstallementCarousel(
+                              width: MediaQuery.sizeOf(context).width / 1.7,
+                            ),
+                          ),
+                        );
+                      }),
+                    ),
+                  ),
+                ),
+                DraggableScrollableSheet(
+                    initialChildSize: 0.65,
+                    maxChildSize: 1,
+                    minChildSize: 0.65,
+                    expand: true,
+                    snap: false,
+                    snapAnimationDuration: const Duration(milliseconds: 150),
+                    controller: _scrollController,
+                    shouldCloseOnMinExtent: false,
+                    builder:
+                        (BuildContext context, ScrollController controller) {
+                      return ApplicationsModalView(
+                        scrollController: controller,
+                      );
+                    }),
+              ],
+            );
+          })),
+    );
   }
 }
