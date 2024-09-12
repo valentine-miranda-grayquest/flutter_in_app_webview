@@ -15,16 +15,30 @@ class _GQHomeState extends State<GQHome> {
   _GQHomeState(this._scrollController);
 
   final DraggableScrollableController _scrollController;
+  double _alpha = 1;
+  final _minChildSize = 0.65;
 
   @override
   void initState() {
     super.initState();
+    addAnimations();
   }
 
   @override
   void dispose() {
     super.dispose();
     _scrollController.dispose();
+    _scrollController.removeListener(_scrollAnimations);
+  }
+
+  void addAnimations() {
+    _scrollController.addListener(_scrollAnimations);
+  }
+
+  void _scrollAnimations() {
+    setState(() {
+      _alpha = 1 + _minChildSize - _scrollController.size;
+    });
   }
 
   @override
@@ -41,7 +55,7 @@ class _GQHomeState extends State<GQHome> {
               )
             ]),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const Row(
@@ -124,41 +138,44 @@ class _GQHomeState extends State<GQHome> {
           body: LayoutBuilder(builder: (context, constraints) {
             return Stack(
               children: [
-                Expanded(
-                    child: Container(
-                  color: Colors.indigo,
-                )),
                 Container(
-                  height: MediaQuery.sizeOf(context).height * 0.27,
+                  height: double.maxFinite,
+                  width: double.maxFinite,
                   color: Colors.indigo,
-                  child: Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 0, vertical: 12),
-                    child: ListView(
-                      scrollDirection: Axis.horizontal,
-                      children: List<Widget>.generate(6, (int index) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 3,
-                          ),
-                          child: GestureDetector(
-                            onTap: () {
-                              print("Did tap Item");
-                            },
-                            child: InstallementCarousel(
-                              width: MediaQuery.sizeOf(context).width / 1.7,
-                            ),
-                          ),
-                        );
-                      }),
-                    ),
-                  ),
                 ),
+                Container(
+                    height: MediaQuery.sizeOf(context).height * 0.27,
+                    color: Colors.indigo,
+                    child: Opacity(
+                      opacity: _alpha,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 0, vertical: 12),
+                        child: ListView(
+                          scrollDirection: Axis.horizontal,
+                          children: List<Widget>.generate(6, (int index) {
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 3,
+                              ),
+                              child: GestureDetector(
+                                onTap: () {
+                                  print("Did tap Item");
+                                },
+                                child: InstallementCarousel(
+                                  width: MediaQuery.sizeOf(context).width / 1.7,
+                                ),
+                              ),
+                            );
+                          }),
+                        ),
+                      ),
+                    )),
                 DraggableScrollableSheet(
-                    initialChildSize: 0.65,
+                    initialChildSize: _minChildSize,
                     maxChildSize: 1,
-                    minChildSize: 0.65,
+                    minChildSize: _minChildSize,
                     expand: true,
                     snap: false,
                     snapAnimationDuration: const Duration(milliseconds: 150),
